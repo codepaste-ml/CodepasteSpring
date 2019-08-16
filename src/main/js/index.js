@@ -1,9 +1,10 @@
-function textComponent() {
-    const element = document.createElement('div');
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-    element.innerHTML = 'Hello world';
+const Header = () => (
 
-    return element;
-}
+);
 
-document.body.appendChild(textComponent());
+const App = () => (
+    <Header />
+);
