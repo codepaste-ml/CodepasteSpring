@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/main/js/index.js',
+    entry: './src/main/webapp/index.js',
     devtool: 'sourcemaps',
     cache: true,
     mode: 'development',
@@ -11,8 +11,9 @@ module.exports = {
     },
     module: {
         rules: [
+            { test: /\.css$/, use: ['style-loader', 'css-loader']},
             {
-                test: path.join(__dirname, '.'),
+                test: /\.m?js$/,
                 exclude: /(node_modules)/,
                 use: [{
                     loader: 'babel-loader',
