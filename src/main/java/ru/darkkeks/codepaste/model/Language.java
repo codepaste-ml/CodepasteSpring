@@ -11,12 +11,15 @@ public class Language {
     @GeneratedValue
     private int id;
 
+    private String alias;
+
     private String name;
 
     public Language() {
     }
 
-    public Language(String name) {
+    public Language(String alias, String name) {
+        this.alias = alias;
         this.name = name;
     }
 
@@ -36,4 +39,11 @@ public class Language {
         this.name = name;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 }

@@ -5,53 +5,52 @@ import React, {Component} from 'react';
 import Prism from 'prismjs';
 import ReactDOM from 'react-dom';
 import {Route, Switch} from 'react-router';
-import {Button, Col, Container, Form, FormGroup, FormLabel, Nav, Navbar, Row} from 'react-bootstrap';
+import {Button, Col, Container, FormControl, FormGroup, FormLabel, Nav, Navbar, Row} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BrowserRouter} from 'react-router-dom';
-import {Select} from "react-select";
+import Select from "react-select";
 
-const api = Api();
 
 class Api {
-    static host = '';
+    constructor(host) {
+        this.host = host;
+    }
 
-    static request(path) {
-        return fetch(`${Api.host}${path}`).then(r => r.json());
+    request(path) {
+        return fetch(`${this.host}${path}`).then(r => r.json());
     }
 
     getLanguages() {
-        return Api.request('/lang');
+        return this.request('/lang');
     }
 
     getPaste(alias) {
-        return Api.request(`/get/${alias}`);
+        return this.request(`/get/${alias}`);
     }
 }
 
+const api = new Api('/api');
 
-const CodepasteNavbar = () => (
-    <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="/">
-            <img src="/favicon.png" height={40} className="d-inline-block" alt="Codepaste"/>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="codepaste-navbar"/>
-        <Navbar.Collapse id="codepaste-navbar">
-            <Nav className="mr-auto">
-                <LinkContainer to="/">
-                    <Nav.Link>Home</Nav.Link>
-                </LinkContainer>
-                <Nav.Link href="https://t.me/codepaste_bot">Telegram Bot</Nav.Link>
-            </Nav>
-        </Navbar.Collapse>
-    </Navbar>
-);
-
-const PastePage = ({match}) => (
-    <>
-        <Paste alias={match.params.alias}/>
-        <ToTopButton/>
-    </>
-);
+class CodepasteNavbar extends Component {
+    render() {
+        return (
+            <Navbar bg="light" expand="lg">
+                <Navbar.Brand href="/">
+                    <img src="/favicon.png" height={40} className="d-inline-block" alt="Codepaste"/>
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="codepaste-navbar"/>
+                <Navbar.Collapse id="codepaste-navbar">
+                    <Nav className="mr-auto">
+                        <LinkContainer to="/">
+                            <Nav.Link>Home</Nav.Link>
+                        </LinkContainer>
+                        <Nav.Link href="https://t.me/codepaste_bot">Telegram Bot</Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        );
+    }
+}
 
 class PrismCode extends Component {
     componentDidMount() {
@@ -116,25 +115,42 @@ class Paste extends Component {
     }
 }
 
-const ToTopButton = () => (
-    <button className="to-top">
-        <span className="checkmark"/>
-    </button>
-);
+class ToTopButton extends Component {
+    render() {
+        return (
+            <button className="to-top">
+                <span className="checkmark"/>
+            </button>
+        );
+    }
+}
 
 class LangSelector extends Component {
-    state = {
-        language: 'none',
-        options: {
-            'none': 'Default',
-        }
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            language: 'none',
+            options: [{
+                value: 'none',
+                label: 'Default'
+            }]
+        };
+
+        this.changeValue = value => {
+            this.setState({
+                language: value
+            })
+        };
+    }
 
     componentDidMount() {
         api.getLanguages().then(languages => {
-            this.setState(languages.map(lang => {
-
-            }))
+            this.setState({
+                options: languages.map(lang => ({
+                    value: lang.name,
+                    label: lang.alias
+                }))
+            });
         })
     }
 
@@ -142,53 +158,70 @@ class LangSelector extends Component {
         return (
             <Select
                 value={this.state.language}
+                onChange={this.changeValue}
                 options={this.state.options}
             />
         )
     }
 }
 
-const HomePage = () => (
-    <Component fluid={true}>
-        <h2 className="text-center header-text">New paste</h2>
-        <FormGroup>
-            <textarea className="form-control code-area" rows="20" title="New Paste"/>
-            <div className="controls">
-                <Row>
-                    <Col md={4}>
-                        <div className="form-horizontal">
-                            <FormGroup>
-                                <label className="control-label col-sm-4" htmlFor="name">Name:</label>
-                                <div className="col-sm-8">
-                                    <input type="text" className="form-control" id="name" placeholder="Untitled"/>
-                                </div>
-                            </FormGroup>
-                            <div className="form-group">
-                                <label className="control-label col-sm-4" htmlFor="lang">Language:</label>
-                                <Col sm={8}>
-                                    <select id="lang" className="language_select"/>
-                                </Col>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col offset={6} md={2}>
-                        <Button className="submit" variant="success">
-                            <span>Submit</span>
-                        </Button>
-                    </Col>
-                </Row>
+class PastePage extends Component {
+    render() {
+        let {match} = this.props;
+        return (
+            <>
+                <Paste alias={match.params.alias}/>
+                <ToTopButton/>
+            </>
+        );
+    }
+}
+
+class HomePage extends Component {
+    render() {
+        return (
+            <div className="content">
+                <Container fluid={true}>
+                    <h2 className="text-center header-text">New paste</h2>
+                    <FormGroup>
+                        <textarea className="form-control code-area" rows="20" title="New Paste"/>
+                    </FormGroup>
+                    <div className="controls">
+                        <Row>
+                            <Col md={4}>
+                                <FormGroup as={Row}>
+                                    <FormLabel column sm={4}>Name:</FormLabel>
+                                    <Col sm={8}>
+                                        <FormControl type="text" placeholder="Untitled"/>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup as={Row}>
+                                    <FormLabel column sm={4}>Language:</FormLabel>
+                                    <Col sm={8}>
+                                        <FormControl as={LangSelector}/>
+                                    </Col>
+                                </FormGroup>
+                            </Col>
+                            <Col md={{ span: 2, offset: 6 }}>
+                                <Button className="submit pull-right btn-block" variant="success">
+                                    <span>Submit</span>
+                                </Button>
+                            </Col>
+                        </Row>
+                    </div>
+                </Container>
             </div>
-        </FormGroup>
-    </Component>
-);
+        );
+    }
+}
 
 
 const App = () => (
     <BrowserRouter>
         <CodepasteNavbar/>
         <Switch>
-            <Route exact path="/" render={}/>
-            <Route path="/:alias" render={PastePage}/>
+            <Route exact path="/" component={HomePage}/>
+            <Route path="/:alias" component={PastePage}/>
         </Switch>
     </BrowserRouter>
 );
