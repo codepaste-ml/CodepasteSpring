@@ -1,0 +1,88 @@
+/*.navbar-brand {*/
+/*    padding: 8px 15px 8px 8px;*/
+/*}*/
+
+/*.navbar-brand img {*/
+/*    height: 100%;*/
+/*}*/
+
+.header-text {
+    margin: 10px;
+}
+
+.content {
+    width: 87%;
+    margin-bottom: 20px;
+}
+
+.code-area {
+    height: 100%;
+}
+
+.raw.code-area {
+    background-color: transparent;
+}
+
+.select2 {
+    margin-top: 6px;
+}
+
+.submit span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.submit span:after {
+    content: "»";
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -10px;
+    transition: 0.5s;
+}
+
+.submit:hover span {
+    padding-right: 15px;
+}
+
+.submit:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+/*pre {*/
+/*    padding: 0;*/
+/*}*/
+
+/*code {*/
+/*    padding: 0;*/
+/*}*/
+
+.link {
+    padding-right: 2px;
+    font-size: smaller;
+}
+
+a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.33);
+    transition: color 0.3s;
+}
+
+a:hover, a:focus {
+    text-decoration: none;
+    color: #000;
+}
+
+.through-bot {
+    top: -1em;
+    left: 1px;
+    font-size: 0.6em;
+}
+
+.through-bot img {
+    margin: 1px 1px 3px;
+    width: 13px;
+}

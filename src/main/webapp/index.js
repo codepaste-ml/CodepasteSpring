@@ -1,12 +1,33 @@
 import './main.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import React, {Component} from 'react';
 
-import React from 'react';
+import Prism from 'prismjs';
 import ReactDOM from 'react-dom';
 import {Route, Switch} from 'react-router';
-import {Nav, Navbar} from 'react-bootstrap';
+import {Button, Col, Container, Form, FormGroup, FormLabel, Nav, Navbar, Row} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BrowserRouter} from 'react-router-dom';
+import {Select} from "react-select";
+
+const api = Api();
+
+class Api {
+    static host = '';
+
+    static request(path) {
+        return fetch(`${Api.host}${path}`).then(r => r.json());
+    }
+
+    getLanguages() {
+        return Api.request('/lang');
+    }
+
+    getPaste(alias) {
+        return Api.request(`/get/${alias}`);
+    }
+}
+
 
 const CodepasteNavbar = () => (
     <Navbar bg="light" expand="lg">
@@ -25,16 +46,149 @@ const CodepasteNavbar = () => (
     </Navbar>
 );
 
-const Paste = () => {
+const PastePage = ({match}) => (
+    <>
+        <Paste alias={match.params.alias}/>
+        <ToTopButton/>
+    </>
+);
 
-};
+class PrismCode extends Component {
+    componentDidMount() {
+        this.highlight()
+    }
+
+    componentDidUpdate() {
+        this.highlight()
+    }
+
+    highlight() {
+        Prism.highlightElement(this.domNode, true)
+    }
+
+    render() {
+        return (
+            <pre>
+                <code ref={node => this.domNode = node}
+                      className={`language-${this.props.language}`}>
+                    {this.props.source}
+                </code>
+            </pre>
+        );
+    }
+}
+
+class Paste extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            paste: null
+        };
+    }
+
+    componentDidMount() {
+        api.getPaste(this.props.alias)
+            .then(response => this.setState({
+                paste: response
+            }));
+    }
+
+    render() {
+        const {paste} = this.state;
+        console.log(paste);
+        return (!paste ? <Container/> :
+                <Container fluid={true}>
+                    <h2 className="text-center header-text">{paste.name}</h2>
+                    <div className="code-area">
+                        <PrismCode language={paste.language} source={paste.source}/>
+                    </div>
+                    {/*<h3 className="text-center header-text">*/}
+                    {/*    <a className="raw-link" href="{% host_url 'view_source_raw' alias=alias host 'raw' %}">*/}
+                    {/*        <span className="link glyphicon glyphicon-link" aria-hidden="true"></span>*/}
+                    {/*    </a>*/}
+                    {/*    Raw code*/}
+                    {/*</h3>*/}
+                    {/*<div className="form-group">*/}
+                    {/*    <textarea className="form-control raw code-area" rows="20" readOnly title="Raw code"></textarea>*/}
+                    {/*</div>*/}
+                </Container>
+        );
+    }
+}
+
+const ToTopButton = () => (
+    <button className="to-top">
+        <span className="checkmark"/>
+    </button>
+);
+
+class LangSelector extends Component {
+    state = {
+        language: 'none',
+        options: {
+            'none': 'Default',
+        }
+    };
+
+    componentDidMount() {
+        api.getLanguages().then(languages => {
+            this.setState(languages.map(lang => {
+
+            }))
+        })
+    }
+
+    render() {
+        return (
+            <Select
+                value={this.state.language}
+                options={this.state.options}
+            />
+        )
+    }
+}
+
+const HomePage = () => (
+    <Component fluid={true}>
+        <h2 className="text-center header-text">New paste</h2>
+        <FormGroup>
+            <textarea className="form-control code-area" rows="20" title="New Paste"/>
+            <div className="controls">
+                <Row>
+                    <Col md={4}>
+                        <div className="form-horizontal">
+                            <FormGroup>
+                                <label className="control-label col-sm-4" htmlFor="name">Name:</label>
+                                <div className="col-sm-8">
+                                    <input type="text" className="form-control" id="name" placeholder="Untitled"/>
+                                </div>
+                            </FormGroup>
+                            <div className="form-group">
+                                <label className="control-label col-sm-4" htmlFor="lang">Language:</label>
+                                <Col sm={8}>
+                                    <select id="lang" className="language_select"/>
+                                </Col>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col offset={6} md={2}>
+                        <Button className="submit" variant="success">
+                            <span>Submit</span>
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
+        </FormGroup>
+    </Component>
+);
+
 
 const App = () => (
     <BrowserRouter>
         <CodepasteNavbar/>
         <Switch>
-            <Route exact path="/"/>
-            <Route path="/:alias" render={() => Paste}/>
+            <Route exact path="/" render={}/>
+            <Route path="/:alias" render={PastePage}/>
         </Switch>
     </BrowserRouter>
 );
