@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 
 import Prism from 'prismjs';
 import ReactDOM from 'react-dom';
-import {Route, Switch} from 'react-router';
+import {Redirect, Route, Switch} from 'react-router';
 import {Button, Col, Container, FormControl, FormGroup, FormLabel, Nav, Navbar, Row} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BrowserRouter} from 'react-router-dom';
@@ -12,24 +12,36 @@ import Select from "react-select";
 
 
 class Api {
-    constructor(host) {
-        this.host = host;
+    static host = '/api';
+
+    static post(path, body) {
+        return fetch(`${Api.host}${path}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(body)
+        }).then(r => r.json());
     }
 
-    request(path) {
-        return fetch(`${this.host}${path}`).then(r => r.json());
+    static get(path) {
+        return fetch(`${Api.host}${path}`).then(r => r.json());
     }
 
-    getLanguages() {
-        return this.request('/lang');
+    static getLanguages() {
+        return Api.get('/lang');
     }
 
-    getPaste(alias) {
-        return this.request(`/get/${alias}`);
+    static getPaste(alias) {
+        return Api.get(`/get/${alias}`);
+    }
+
+    static createPaste({source, name, language}) {
+        return Api.post('/create', {
+            source, name, language
+        });
     }
 }
-
-const api = new Api('/api');
 
 class CodepasteNavbar extends Component {
     render() {
@@ -86,7 +98,7 @@ class Paste extends Component {
     }
 
     componentDidMount() {
-        api.getPaste(this.props.alias)
+        Api.getPaste(this.props.alias)
             .then(response => this.setState({
                 paste: response
             }));
@@ -135,16 +147,10 @@ class LangSelector extends Component {
                 label: 'Default'
             }]
         };
-
-        this.changeValue = value => {
-            this.setState({
-                language: value
-            })
-        };
     }
 
     componentDidMount() {
-        api.getLanguages().then(languages => {
+        Api.getLanguages().then(languages => {
             this.setState({
                 options: languages.map(lang => ({
                     value: lang.name,
@@ -153,6 +159,13 @@ class LangSelector extends Component {
             });
         })
     }
+
+    changeValue = value => {
+        this.props.onChange(value.value);
+        this.setState({
+            language: value
+        })
+    };
 
     render() {
         return (
@@ -178,13 +191,59 @@ class PastePage extends Component {
 }
 
 class HomePage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: '',
+            language: null,
+            source: '',
+
+            created: null
+        }
+    }
+
+    handleChange = event => {
+        const target = event.target;
+        this.setState({
+            [target.name]: target.value
+        });
+    };
+
+    handleLangChange = value => {
+        this.setState({
+            language: value
+        });
+    };
+
+    handleSubmit = event => {
+        event.preventDefault();
+
+        const {source, language, name} = this.state;
+        Api.createPaste({source, language, name}).then(paste => {
+            this.setState({
+                created: paste.alias
+            })
+        });
+    };
+
+    langChangeComponent = () => (
+        <LangSelector onChange={this.handleLangChange}/>
+    );
+
     render() {
-        return (
+        const created = this.state.created;
+
+        return created ? <Redirect to={created}/> : (
             <div className="content">
                 <Container fluid={true}>
                     <h2 className="text-center header-text">New paste</h2>
                     <FormGroup>
-                        <textarea className="form-control code-area" rows="20" title="New Paste"/>
+                        <textarea
+                            name="source"
+                            className="form-control code-area"
+                            rows="20"
+                            title="New Paste"
+                            onChange={this.handleChange}/>
                     </FormGroup>
                     <div className="controls">
                         <Row>
@@ -192,18 +251,25 @@ class HomePage extends Component {
                                 <FormGroup as={Row}>
                                     <FormLabel column sm={4}>Name:</FormLabel>
                                     <Col sm={8}>
-                                        <FormControl type="text" placeholder="Untitled"/>
+                                        <FormControl name="name"
+                                                     type="text"
+                                                     placeholder="Untitled"
+                                                     value={this.state.name}
+                                                     onChange={this.handleChange}/>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup as={Row}>
                                     <FormLabel column sm={4}>Language:</FormLabel>
                                     <Col sm={8}>
-                                        <FormControl as={LangSelector}/>
+                                        <FormControl name="language"
+                                                     as={this.langChangeComponent}/>
                                     </Col>
                                 </FormGroup>
                             </Col>
-                            <Col md={{ span: 2, offset: 6 }}>
-                                <Button className="submit pull-right btn-block" variant="success">
+                            <Col md={{span: 2, offset: 6}}>
+                                <Button className="submit pull-right btn-block"
+                                        variant="success"
+                                        onClick={this.handleSubmit}>
                                     <span>Submit</span>
                                 </Button>
                             </Col>

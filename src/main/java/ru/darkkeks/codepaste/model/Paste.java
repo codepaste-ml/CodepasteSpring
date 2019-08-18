@@ -1,5 +1,7 @@
 package ru.darkkeks.codepaste.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ public class Paste {
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private int id;
 
     @Column(unique = true)
@@ -16,8 +19,9 @@ public class Paste {
     @OneToOne(targetEntity = Language.class)
     private Language language;
 
-    private boolean isBot;
+    private boolean createdUsingBot;
 
+    @JsonIgnore
     @OneToOne(targetEntity = BotUser.class)
     private BotUser author;
 
@@ -61,12 +65,12 @@ public class Paste {
         this.language = language;
     }
 
-    public boolean isBot() {
-        return isBot;
+    public boolean isCreatedUsingBot() {
+        return createdUsingBot;
     }
 
-    public void setBot(boolean bot) {
-        isBot = bot;
+    public void setCreatedUsingBot(boolean createdUsingBot) {
+        this.createdUsingBot = createdUsingBot;
     }
 
     public BotUser getAuthor() {
