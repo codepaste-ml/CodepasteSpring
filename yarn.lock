@@ -780,6 +780,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.3.tgz#dfa0c92efe44a1d1a7974fb49ffeb40ef2da5a27"
   integrity sha512-zVgvPwGK7c1aVdUVc9Qv7SqepOGRDrqCw7KZPSZziWGxSlbII3gmvGLPzLX4d0n0BMbamBacUrN22zOMyFFEkQ==
 
+"@fortawesome/fontawesome-free@^5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.10.1.tgz#dec28ee02c3fc51da46d53ce4da9d5787312fbd7"
+  integrity sha512-PYncBhgN1l02mwHmczukexmu4yRTjRDAAdcK62jdWSAW8epcnZ9K2win/7rMrffiv/c7XLVDA8vD+yi6WyvbGQ==
+
 "@react-bootstrap/react-popper@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@react-bootstrap/react-popper/-/react-popper-1.2.1.tgz#4edf4851d5b4dcf2eb6b264ebbed1a7b7654177b"
@@ -1176,6 +1181,11 @@ babel-plugin-macros@^2.0.0:
     "@babel/runtime" "^7.4.2"
     cosmiconfig "^5.2.0"
     resolve "^1.10.0"
+
+babel-plugin-prismjs@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-prismjs/-/babel-plugin-prismjs-1.1.1.tgz#974b2346d6ea8bdb2b16c3fdf1342bbe97fc6f51"
+  integrity sha512-MmwxA//jBpXH0IhJ2FbpBJmd6Bvq5rBe3UD3udUqfkkOdh6lmQeYxoVGpkIvLuuXecrynWjpPqwM0JPxErebpQ==
 
 babel-plugin-syntax-class-properties@^6.8.0:
   version "6.13.0"
@@ -2865,6 +2875,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
+
 lodash@^4.17.13, lodash@^4.17.4:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
@@ -3794,6 +3809,14 @@ react-router@5.0.1, react-router@^5.0.1:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-scroll@^1.7.13:
+  version "1.7.13"
+  resolved "https://registry.yarnpkg.com/react-scroll/-/react-scroll-1.7.13.tgz#e68c8bfd79e19cb71893e1fc341691ad3411d44e"
+  integrity sha512-DsXuCGZehsbbRVDlBhBT1GtkMR2VzYTqqzd0+swqdbC/rRVYDjleujGDaaUJh9FQMNDEMLB9NEmHLdD2yuyFBA==
+  dependencies:
+    lodash.throttle "^4.1.1"
+    prop-types "^15.5.8"
 
 react-select@^3.0.4:
   version "3.0.4"

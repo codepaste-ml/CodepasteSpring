@@ -29,6 +29,7 @@ public class Paste {
 
     private String name;
 
+    @Column(columnDefinition = "Text")
     private String source;
 
     public Paste() {

@@ -1,5 +1,12 @@
 import './main.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'prismjs/themes/prism.css'
+
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/solid'
+import '@fortawesome/fontawesome-free/js/regular'
+import '@fortawesome/fontawesome-free/js/brands'
+
 import React, {Component} from 'react';
 
 import Prism from 'prismjs';
@@ -9,7 +16,7 @@ import {Button, Col, Container, FormControl, FormGroup, FormLabel, Nav, Navbar, 
 import {LinkContainer} from 'react-router-bootstrap';
 import {BrowserRouter} from 'react-router-dom';
 import Select from "react-select";
-
+import Scroll from "react-scroll";
 
 class Api {
     static host = '/api';
@@ -66,20 +73,20 @@ class CodepasteNavbar extends Component {
 
 class PrismCode extends Component {
     componentDidMount() {
-        this.highlight()
+        this.highlight();
     }
 
     componentDidUpdate() {
-        this.highlight()
+        this.highlight();
     }
 
     highlight() {
-        Prism.highlightElement(this.domNode, true)
+        Prism.highlightElement(this.domNode);
     }
 
     render() {
         return (
-            <pre>
+            <pre className="source-pre line-numbers">
                 <code ref={node => this.domNode = node}
                       className={`language-${this.props.language}`}>
                     {this.props.source}
@@ -106,31 +113,59 @@ class Paste extends Component {
 
     render() {
         const {paste} = this.state;
-        console.log(paste);
+
         return (!paste ? <Container/> :
-                <Container fluid={true}>
-                    <h2 className="text-center header-text">{paste.name}</h2>
-                    <div className="code-area">
-                        <PrismCode language={paste.language} source={paste.source}/>
-                    </div>
-                    {/*<h3 className="text-center header-text">*/}
-                    {/*    <a className="raw-link" href="{% host_url 'view_source_raw' alias=alias host 'raw' %}">*/}
-                    {/*        <span className="link glyphicon glyphicon-link" aria-hidden="true"></span>*/}
-                    {/*    </a>*/}
-                    {/*    Raw code*/}
-                    {/*</h3>*/}
-                    {/*<div className="form-group">*/}
-                    {/*    <textarea className="form-control raw code-area" rows="20" readOnly title="Raw code"></textarea>*/}
-                    {/*</div>*/}
-                </Container>
+                <div className="content">
+                    <Container fluid={true}>
+                        <h2 className="text-center header-text">{paste.name || "Untitled"}</h2>
+                        <div className="code-area">
+                            <PrismCode language={paste.language.name} source={paste.source}/>
+                        </div>
+                        <h3 className="text-center header-text">
+                            <a className="raw-link" href={`codepaste.ml/raw/${paste.alias}`}>
+                                <i className="fas fa-link fa-sm" aria-hidden="true"/>
+                            </a>
+                            Raw code
+                        </h3>
+                        <FormGroup>
+                            <FormControl as="textarea"
+                                         className="raw code-area"
+                                         rows={20}
+                                         readOnly
+                                         title="Raw code"
+                                         value={paste.source}/>
+                        </FormGroup>
+                    </Container>
+                </div>
         );
     }
 }
 
 class ToTopButton extends Component {
+
+    static scrollToTop() {
+        Scroll.animateScroll.scrollToTop({
+            duration: 800
+        });
+    }
+
+    updateScroll = () => {
+        this.setState({
+            scroll: window.pageYOffset
+        });
+    };
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.updateScroll);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.updateScroll);
+    }
+
     render() {
-        return (
-            <button className="to-top">
+        return this.state && this.state.scroll > 100 && (
+            <button className="to-top" onClick={ToTopButton.scrollToTop}>
                 <span className="checkmark"/>
             </button>
         );
