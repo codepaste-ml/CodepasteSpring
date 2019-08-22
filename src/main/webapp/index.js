@@ -55,7 +55,7 @@ class CodepasteNavbar extends Component {
         return (
             <Navbar bg="light" expand="lg">
                 <Navbar.Brand href="/">
-                    <img src="/favicon.png" height={40} className="d-inline-block" alt="Codepaste"/>
+                    <img src="/codepaste-react/public/favicon.png" height={40} className="d-inline-block" alt="Codepaste"/>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="codepaste-navbar"/>
                 <Navbar.Collapse id="codepaste-navbar">
