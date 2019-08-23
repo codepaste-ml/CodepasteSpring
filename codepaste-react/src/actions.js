@@ -1,0 +1,2 @@
+export const RECEIVE_LANGUAGES = 'RECEIVE_LANGUAGES';
+export const PASTE_LOADED = 'PASTE_LOADED';

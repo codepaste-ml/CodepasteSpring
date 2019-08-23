@@ -1,50 +1,49 @@
 import React, {Component} from "react";
-import {Button, Col, Container, FormControl, FormGroup, FormLabel, Row} from "react-bootstrap";
-import {connect} from "react-redux";
+import {Alert, Button, Col, Container, FormControl, FormGroup, FormLabel, Row} from "react-bootstrap";
+import LangSelector from "./LangSelect";
+import {Api} from "../api";
 
-const mapStateToProps = state => ({});
+export default class CreatePaste extends Component {
+    state = {
+        source: '',
+        name: '',
+        language: null
+    };
 
-const mapDispatchToProps = dispatch => ({
-    onSubmit: (event)
-})
+    handleChange = ({target: {name, value}}) => {
+        this.setState({...this.state, [name]: value});
+    };
 
-class CreatePaste extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            source: '',
-            name: '',
-            language: null
-        };
-    }
-
-    handleChange = event => {
-        this.setState({
-            ...this.state,
-            [event.target.name]: event.target.value
-        });
+    handleLangChange = value => {
+        this.setState({...this.state, language: value});
     };
 
     handleSubmit = event => {
         event.preventDefault();
 
-        const {source, language, name} = this.state;
+        this.setState({
+            error: null
+        });
+
+        const {source, language: langObject, name} = this.state;
+        const {value: language = null} = langObject || {};
         Api.createPaste({source, language, name}).then(paste => {
-            this.history.push("/$(paste.alias)")
+            const {alias, message: error} = paste;
+            if (alias) {
+                this.props.history.push(`/${alias}`)
+            } else {
+                this.setState({error});
+            }
         });
     };
 
-    langChangeComponent = () => (
-        <LangSelector onChange={this.handleLangChange}/>
-    );
-
     render() {
+        const {name, language, error} = this.state;
         return (
             <div className="content">
                 <Container fluid={true}>
                     <h2 className="text-center header-text">New paste</h2>
-                    <FormGroup>
+                    <FormGroup as={Row}>
                         <textarea
                             name="source"
                             className="form-control code-area"
@@ -61,7 +60,7 @@ class CreatePaste extends Component {
                                         <FormControl name="name"
                                                      type="text"
                                                      placeholder="Untitled"
-                                                     value={this.state.name}
+                                                     value={name}
                                                      onChange={this.handleChange}/>
                                     </Col>
                                 </FormGroup>
@@ -69,16 +68,23 @@ class CreatePaste extends Component {
                                     <FormLabel column sm={4}>Language:</FormLabel>
                                     <Col sm={8}>
                                         <FormControl name="language"
-                                                     as={this.langChangeComponent}/>
+                                                     value={language}
+                                                     onChange={this.handleLangChange}
+                                                     as={LangSelector}/>
                                     </Col>
                                 </FormGroup>
                             </Col>
                             <Col md={{span: 2, offset: 6}}>
-                                <Button className="submit pull-right btn-block"
-                                        variant="success"
-                                        onClick={this.handleSubmit}>
-                                    <span>Submit</span>
-                                </Button>
+                                <FormGroup as={Row}>
+                                    <Button className="submit pull-right btn-block"
+                                            variant="success"
+                                            onClick={this.handleSubmit}>
+                                        <span>Submit</span>
+                                    </Button>
+                                </FormGroup>
+                                {error && <Row>
+                                    <Alert variant="danger">{error}</Alert>
+                                </Row>}
                             </Col>
                         </Row>
                     </div>
@@ -86,6 +92,4 @@ class CreatePaste extends Component {
             </div>
         )
     }
-};
-
-return connect(mapStateToProps)
+}

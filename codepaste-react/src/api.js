@@ -1,4 +1,4 @@
-class Api {
+export class Api {
     static host = '/api';
 
     static post(path, body) {
