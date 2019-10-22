@@ -7,7 +7,3 @@ build/
 ### IntelliJ IDEA ###
 .idea
 *.iml
-
-### Web ###
-node_modules
-bundle.js
