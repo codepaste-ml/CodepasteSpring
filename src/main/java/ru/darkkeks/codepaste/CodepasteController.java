@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/api")
+@CrossOrigin
 public class CodepasteController {
 
     private final AliasProducer aliasProducer;
@@ -52,7 +52,7 @@ public class CodepasteController {
         return paste;
     }
 
-    @GetMapping("/lang")
+    @GetMapping("/languages")
     public Iterable<Language> getLanguages() {
         return languageRepository.findAll();
     }
