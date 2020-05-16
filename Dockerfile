@@ -18,4 +18,4 @@ FROM openjdk:11-jdk-slim
 EXPOSE 8080
 RUN mkdir /app
 COPY --from=build /build/build/libs/*.jar /app/app.jar
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Xms400m", "-Xmx400m", "-Xss512k", "-XX:CICompilerCount=2", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]
