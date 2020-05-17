@@ -1,8 +1,10 @@
-package ru.darkkeks.codepaste;
+package ru.darkkeks.codepaste.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import ru.darkkeks.codepaste.model.Language;
 
+import java.util.Optional;
+
 public interface LanguageRepository extends CrudRepository<Language, Integer> {
-    Language findByName(String name);
+    Optional<Language> findByName(String name);
 }
