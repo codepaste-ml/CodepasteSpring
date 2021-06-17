@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.darkkeks.codepaste.alias.AliasProducer;
 import ru.darkkeks.codepaste.exception.LanguageNotFoundException;
 import ru.darkkeks.codepaste.model.Language;
 import ru.darkkeks.codepaste.model.Paste;
 import ru.darkkeks.codepaste.model.PasteDTO;
-import ru.darkkeks.codepaste.repository.LanguageRepository;
-import ru.darkkeks.codepaste.repository.PasteRepository;
+import ru.darkkeks.codepaste.LanguageRepository;
+import ru.darkkeks.codepaste.PasteRepository;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +46,7 @@ public class CodepasteController {
     }
 
     @PostMapping("/create")
-    public Paste create(@Valid @RequestBody PasteDTO pasteDTO) {
+    public Paste create(@Validated @RequestBody PasteDTO pasteDTO) {
         Paste paste = new Paste();
 
         String languageName = pasteDTO.getLanguage();

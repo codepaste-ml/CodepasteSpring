@@ -7,7 +7,7 @@ COPY gradle /build/gradle
 RUN ./gradlew --version
 
 # Cache dependencies
-COPY build.gradle settings.gradle /build/
+COPY build.gradle.kts settings.gradle /build/
 RUN ./gradlew build -x test --no-daemon || return 0
 
 COPY . /build
